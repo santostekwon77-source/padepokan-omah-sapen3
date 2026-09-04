@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Padepokan Omah Sapen</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#173D2E">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root{
+    --emerald-deep:#173D2E;
+    --emerald:#1F5940;
+    --gold:#C9A84C;
+    --gold-soft:#E8D9A8;
+    --ivory:#FAF6EC;
+    --paper:#F3EDDD;
+    --ink:#2A2620;
+    --ink-soft:#635C4E;
+    --maroon:#7A3B32;
+    --line:#DCD0AE;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;background:var(--ivory);}
+  body{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+  }
+  #app{
+    width:100%;
+    max-width:480px;
+    height:100vh;
+    height:100dvh;
+    background:var(--ivory);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  h1,h2,h3,.serif{font-family:'Amiri', serif;}
+  ::selection{background:var(--gold-soft);}
+  button{font-family:inherit; cursor:pointer;}
+  input, textarea, select{font-family:inherit;}
+  a{color:inherit;}
+
+  /* ---- Geometric divider ---- */
+  .divider{
+    height:14px;
+    background-image: repeating-linear-gradient(45deg, var(--gold) 0 2px, transparent 2px 10px);
+    opacity:.55;
+  }
+  .divider.thin{height:8px;}
+
+  /* ---- Login screen ---- */
+  #screen-login{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(201,168,76,0.18), transparent 55%),
+      var(--emerald-deep);
+    color:var(--ivory);
+    padding:40px 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  #screen-login .motif{
+    position:absolute;
+    inset:0;
+    opacity:.15;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23C9A84C' stroke-width='1'%3E%3Cpath d='M60 0 L90 30 L60 60 L30 30 Z'/%3E%3Cpath d='M60 60 L90 90 L60 120 L30 90 Z'/%3E%3Cpath d='M0 30 L30 30 L30 60 L0 60 Z'/%3E%3Cpath d='M90 30 L120 30 L120 60 L90 60 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size:140px 140px;
+  }
+  .login-mark{
+    width:78px;height:78px;border-radius:50%;
+    border:1.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Amiri',serif; font-size:30px; color:var(--gold);
+    margin-bottom:22px;
+    position:relative; z-index:1;
+    overflow:hidden;
+  }
+  .login-mark img{width:100%; height:100%; object-fit:cover;}
+  #screen-login h1{
+    font-size:26px; font-weight:700; margin:0 0 6px; text-align:center; z-index:1;
+  }
+  #screen-login p.tagline{
+    color:var(--gold-soft); font-size:13.5px; text-align:center; margin:0 0 34px;
+    letter-spacing:.02em; z-index:1; line-height:1.6;
+  }
+  .login-form{width:100%; max-width:300px; z-index:1;}
+  .login-form label{display:block; font-size:12.5px; color:var(--gold-soft); margin-bottom:6px;}
+  .login-form input{
+    width:100%; padding:13px 14px; border-radius:10px; border:1px solid rgba(201,168,76,0.4);
+    background:rgba(255,255,255,0.06); color:var(--ivory); font-size:15px; outline:none;
+  }
+  .login-form input::placeholder{color:rgba(250,246,236,0.35);}
+  .login-form input:focus{border-color:var(--gold);}
+  .btn-gold{
+    width:100%; margin-top:18px; padding:13px; border:none; border-radius:10px;
+    background:var(--gold); color:var(--emerald-deep); font-weight:700; font-size:15px;
+    letter-spacing:.02em;
+  }
+  .btn-gold:active{background:var(--gold-soft);}
+  .login-error{color:#E8A2A2; font-size:13px; margin-top:12px; text-align:center; min-height:16px;}
+
+  /* ---- Header (inner screens) ---- */
+  header.top{
+    background:var(--emerald-deep);
+    color:var(--ivory);
+    padding:20px 20px 16px;
+    position:relative;
+  }
+  header.top .eyebrow{font-size:11.5px; color:var(--gold-soft); letter-spacing:.03em; margin:0 0 3px;}
+  header.top h2{margin:0; font-size:21px; font-weight:700;}
+  header.top .sub{font-size:12.5px; color:rgba(250,246,236,0.6); margin-top:3px;}
+  .back-row{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .back-btn{
+    background:rgba(255,255,255,0.08); border:none; color:var(--gold-soft);
+    width:30px; height:30px; border-radius:8px; font-size:16px; display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---- Search ---- */
+  .search-wrap{padding:14px 18px 6px; background:var(--ivory);}
+  .search-box{
+    display:flex; align-items:center; gap:8px;
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 14px;
+  }
+  .search-box input{border:none; outline:none; flex:1; font-size:14.5px; background:transparent;}
+  .search-box .icon{color:var(--ink-soft); font-size:14px;}
+
+  main{flex:1; min-height:0; overflow-y:auto; padding-bottom:24px; -webkit-overflow-scrolling:touch;}
+
+  /* ---- Category grid ---- */
+  .cat-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:16px 18px;
+  }
+  .cat-card{
+    background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 14px;
+    border-left:4px solid var(--emerald);
+    display:flex; flex-direction:column; gap:6px; text-align:left;
+  }
+  .cat-card .cat-icon{font-size:20px;}
+  .cat-card .cat-name{font-family:'Amiri',serif; font-weight:700; font-size:16.5px; color:var(--emerald-deep);}
+  .cat-card .cat-count{font-size:12px; color:var(--ink-soft);}
+
+  .section-label{
+    padding:18px 18px 6px; font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em;
+  }
+
+  /* ---- Materi list ---- */
+  .materi-list{padding:6px 18px 8px; display:flex; flex-direction:column; gap:10px;}
+  .materi-card{
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:14px 15px; display:flex; gap:12px; align-items:center;
+    border-left:4px solid var(--gold);
+  }
+  .materi-card .thumb{
+    width:44px; height:44px; border-radius:9px; object-fit:cover; flex-shrink:0; background:var(--paper);
+  }
+  .materi-card .thumb-fallback{
+    width:44px; height:44px; border-radius:9px; flex-shrink:0; background:var(--paper);
+    display:flex; align-items:center; justify-content:center; font-family:'Amiri',serif; color:var(--emerald); font-size:17px;
+  }
+  .materi-card .info{flex:1; min-width:0;}
+  .materi-card .title{font-weight:600; font-size:14.5px; margin:0 0 2px; color:var(--ink);}
+  .materi-card .snippet{font-size:12.5px; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .empty-state{padding:50px 30px; text-align:center; color:var(--ink-soft);}
+  .empty-state .mark{font-family:'Amiri',serif; font-size:34px; color:var(--gold); margin-bottom:10px;}
+
+  /* ---- Materi detail ---- */
+  .materi-detail{padding:20px 20px 40px;}
+  .materi-detail .cat-tag{
+    display:inline-block; font-size:11.5px; color:var(--emerald); background:rgba(31,89,64,0.08);
+    padding:4px 10px; border-radius:20px; margin-bottom:12px;
+  }
+  .materi-detail h2{font-size:22px; margin:0 0 14px; color:var(--emerald-deep); line-height:1.35;}
+  .materi-detail img{width:100%; border-radius:12px; margin-bottom:16px;}
+  .materi-detail .content{font-size:15px; line-height:1.85; color:var(--ink); white-space:pre-wrap;}
+
+  /* ---- Bottom nav ---- */
+  nav.bottom{
+    flex-shrink:0;
+    background:#fff; border-top:1px solid var(--line);
+    display:flex; padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  }
+  nav.bottom button{
+    flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    padding:6px 0; color:var(--ink-soft); font-size:11px;
+  }
+  nav.bottom button .ic{font-size:18px;}
+  nav.bottom button.active{color:var(--emerald);}
+
+  /* ---- Admin ---- */
+  .admin-panel{padding:16px 18px 100px;}
+  .admin-card{
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 15px; margin-bottom:12px;
+  }
+  .admin-card .row{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .admin-card .title{font-weight:600; font-size:14.5px;}
+  .admin-card .meta{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .icon-btn{
+    background:var(--paper); border:none; width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:14px;
+  }
+  .icon-btn.danger{color:var(--maroon);}
+  .fab{
+    position:absolute; right:18px; bottom:88px;
+    width:52px; height:52px; border-radius:50%; background:var(--emerald);
+    color:#fff; border:none; font-size:24px; box-shadow:0 6px 16px rgba(23,61,46,0.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .form-field{margin-bottom:14px;}
+  .form-field label{display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; font-weight:600;}
+  .form-field input[type=text], .form-field textarea, .form-field select{
+    width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:14.5px; outline:none; background:#fff;
+  }
+  .form-field textarea{min-height:150px; resize:vertical; line-height:1.6;}
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus{border-color:var(--emerald);}
+  .form-actions{display:flex; gap:10px; margin-top:20px;}
+  .btn-primary{
+    flex:1; background:var(--emerald); color:#fff; border:none; padding:13px; border-radius:10px; font-weight:600; font-size:14.5px;
+  }
+  .btn-secondary{
+    flex:1; background:var(--paper); color:var(--ink); border:none; padding:13px; border-radius:10px; font-weight:600; font-size:14.5px;
+  }
+  .img-preview-wrap{position:relative; margin-bottom:10px;}
+  .img-preview-wrap img{width:100%; border-radius:10px; display:block;}
+  .img-remove{
+    position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.55); color:#fff; border:none;
+    width:26px; height:26px; border-radius:50%; font-size:13px;
+  }
+  .upload-btn{
+    display:inline-flex; align-items:center; gap:6px; background:var(--paper); border:1px dashed var(--ink-soft);
+    padding:10px 14px; border-radius:10px; font-size:13.5px; color:var(--ink-soft);
+  }
+
+  /* ---- Modal ---- */
+  .modal-overlay{
+    position:absolute; inset:0; background:rgba(23,61,46,0.55); display:flex; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .modal-sheet{
+    background:#fff; width:100%; max-width:480px; border-radius:18px 18px 0 0; padding:22px 22px calc(22px + env(safe-area-inset-bottom));
+    max-height:88vh; overflow-y:auto;
+  }
+  .modal-sheet h3{margin:0 0 4px; font-size:18px; color:var(--emerald-deep);}
+  .modal-sheet .desc{font-size:13px; color:var(--ink-soft); margin-bottom:18px;}
+  .modal-close-row{display:flex; justify-content:flex-end; margin-bottom:6px;}
+
+  .toast{
+    position:absolute; bottom:96px; left:50%; transform:translateX(-50%);
+    background:var(--emerald-deep); color:var(--ivory); padding:11px 18px; border-radius:30px; font-size:13px;
+    z-index:60; box-shadow:0 6px 16px rgba(0,0,0,0.25); white-space:nowrap;
+  }
+  .spinner{
+    width:22px; height:22px; border:2.5px solid rgba(255,255,255,0.25); border-top-color:var(--gold);
+    border-radius:50%; animation:spin .7s linear infinite; margin:0 auto;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-center{flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; color:var(--ink-soft); font-size:13.5px;}
+  .code-hint{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(201,168,76,0.3); border-radius:10px;
+    padding:10px 14px; font-size:12px; color:var(--gold-soft); margin-top:16px; text-align:center; z-index:1; line-height:1.6;
+  }
+  .login-footer{
+    z-index:1; margin-top:22px; text-align:center; color:rgba(250,246,236,0.55); font-size:11.5px; line-height:1.8;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+  /*EMBEDDED_DATA_START*/let EMBEDDED_DATA = {"config":{"memberCode":"sapen","adminCode":"sapen-admin","communityName":"Padepokan Omah Sapen","tagline":"Kumpulan bacaan istigosah & materi pengobatan, ruqyah untuk anggota dan praktisi","logoImage":null,"address":"","skNumber":"","waNumber":"","memberCodes":[]},"categories":[{"id":"istigosah","name":"Istigosah","icon":"🕌"},{"id":"pengobatan","name":"Pengobatan","icon":"🌿"},{"id":"ruqyah","name":"Ruqyah","icon":"📖"},{"id":"materi-lain","name":"Materi Lain","icon":"✦"}],"materi":{}};/*EMBEDDED_DATA_END*/
+  if(window['pdfjsLib']){
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+  const DEFAULT_MEMBER_CODE = "sapen";
+  const DEFAULT_ADMIN_CODE = "sapen-admin";
+  const DEFAULT_CATEGORIES = [
+    {id:"istigosah", name:"Istigosah", icon:"🕌"},
+    {id:"pengobatan", name:"Pengobatan", icon:"🌿"},
+    {id:"ruqyah", name:"Ruqyah", icon:"📖"},
+    {id:"materi-lain", name:"Materi Lain", icon:"✦"}
+  ];
+
+  let state = {
+    screen: "loading", // loading, login, home, category, detail, admin, adminForm
+    isAdmin: false,
+    config: null,
+    categories: [],
+    materi: {}, // id -> object
+    activeCategoryId: null,
+    activeMateriId: null,
+    searchQuery: "",
+    adminModal: null, // null | 'login' | 'settings'
+    editingMateriId: null, // null = new
+    toast: null,
+    formDraft: null
+  };
+
+  const app = document.getElementById("app");
+
+  function showToast(msg){
+    state.toast = msg;
+    render();
+    setTimeout(()=>{ state.toast = null; render(); }, 2200);
+  }
+
+  function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
+
+  function loadData(){
+    let data = null;
+    try{
+      const raw = localStorage.getItem("pos-draft");
+      if(raw) data = JSON.parse(raw);
+    }catch(e){ data = null; }
+    if(!data) data = cloneData(EMBEDDED_DATA);
+    state.config = Object.assign({ memberCode: DEFAULT_MEMBER_CODE, adminCode: DEFAULT_ADMIN_CODE, communityName: "Padepokan Omah Sapen", tagline: "Kumpulan bacaan istigosah & materi pengobatan, ruqyah untuk anggota dan praktisi", logoImage: null, address: "", skNumber: "", waNumber: "", memberCodes: [] }, data.config || {});
+    if(!state.config.memberCodes) state.config.memberCodes = [];
+    state.categories = (data.categories && data.categories.length) ? data.categories : DEFAULT_CATEGORIES;
+    state.materi = data.materi || {};
+    state.screen = "login";
+    render();
+  }
+
+  function persistDraft(){
+    localStorage.setItem("pos-draft", JSON.stringify({ config: state.config, categories: state.categories, materi: state.materi }));
+  }
+
+  async function saveCategories(){ persistDraft(); }
+  async function saveMateri(){ persistDraft(); }
+  async function saveConfig(){ persistDraft(); }
+
+  function exportUpdatedFile(){
+    const dataBlob = JSON.stringify({ config: state.config, categories: state.categories, materi: state.materi });
+    let html = document.documentElement.outerHTML;
+    html = html.replace(/\/\*EMBEDDED_DATA_START\*\/[\s\S]*?\/\*EMBEDDED_DATA_END\*\//, `/*EMBEDDED_DATA_START*/let EMBEDDED_DATA = ${dataBlob};/*EMBEDDED_DATA_END*/`);
+    const fullHtml = "<!DOCTYPE html>\n" + html;
+    const blob = new Blob([fullHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "padepokan-omah-sapen.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 4000);
+  }
+
+  function importFromFile(file){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const text = ev.target.result;
+      let data = null;
+      try{
+        const m = text.match(/\/\*EMBEDDED_DATA_START\*\/let EMBEDDED_DATA = ([\s\S]*?);\s*\/\*EMBEDDED_DATA_END\*\//);
+        data = m ? JSON.parse(m[1]) : JSON.parse(text);
+      }catch(e){ data = null; }
+      if(!data || (!data.materi && !data.categories)){
+        showToast("File tidak dikenali atau rusak"); return;
+      }
+      const importedCount = Object.keys(data.materi || {}).length;
+      state.materi = Object.assign({}, data.materi || {}, state.materi);
+      const existingIds = new Set(state.categories.map(c=>c.id));
+      (data.categories || []).forEach(c=>{ if(!existingIds.has(c.id)){ state.categories.push(c); existingIds.add(c.id); } });
+      persistDraft();
+      showToast(`Berhasil impor ${importedCount} materi dari file lama`);
+      render();
+    };
+    reader.readAsText(file);
+  }
+
+  function esc(s){
+    return (s||"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  function materiImages(m){
+    if(m.images && m.images.length) return m.images;
+    if(m.image) return [m.image];
+    return [];
+  }
+
+  function materiListByCategory(catId){
+    return Object.entries(state.materi)
+      .filter(([id,m]) => m.categoryId === catId)
+      .map(([id,m]) => ({id, ...m}))
+      .sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+  }
+
+  function searchMateri(q){
+    q = q.trim().toLowerCase();
+    if(!q) return [];
+    return Object.entries(state.materi)
+      .filter(([id,m]) => (m.title||"").toLowerCase().includes(q) || (m.content||"").toLowerCase().includes(q))
+      .map(([id,m]) => ({id, ...m}));
+  }
+
+  function catName(id){
+    const c = state.categories.find(c=>c.id===id);
+    return c ? c.name : "Lainnya";
+  }
+  function catIcon(id){
+    const c = state.categories.find(c=>c.id===id);
+    return c ? c.icon : "✦";
+  }
+
+  // ---------- RENDER ----------
+  function render(){
+    app.innerHTML = "";
+    if(state.screen === "loading"){ renderLoading(); return; }
+    if(state.screen === "login"){ renderLogin(); return; }
+
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.flex = "1";
+    wrap.style.height = "100%";
+    wrap.style.minHeight = "0";
+    wrap.style.position = "relative";
+    wrap.style.overflow = "hidden";
+
+    if(state.screen === "home") wrap.appendChild(renderHome());
+    if(state.screen === "category") wrap.appendChild(renderCategory());
+    if(state.screen === "detail") wrap.appendChild(renderDetail());
+    if(state.screen === "search") wrap.appendChild(renderSearch());
+    if(state.screen === "admin") wrap.appendChild(renderAdmin());
+    if(state.screen === "adminForm") wrap.appendChild(renderAdminForm());
+
+    wrap.appendChild(renderBottomNav());
+    app.appendChild(wrap);
+
+    if(state.adminModal === "login") app.appendChild(renderAdminLoginModal());
+    if(state.adminModal === "settings") app.appendChild(renderSettingsModal());
+    if(state.adminModal === "memberCodes") app.appendChild(renderMemberCodesModal());
+    if(state.adminModal === "confirmDelete") app.appendChild(renderConfirmDeleteModal());
+
+    if(state.toast){
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = state.toast;
+      app.appendChild(t);
+    }
+  }
+
+  function renderLoading(){
+    const d = document.createElement("div");
+    d.style.height = "100%";
+    d.style.display = "flex";
+    d.className = "";
+    d.innerHTML = `<div class="loading-center" style="width:100%;"><div class="spinner"></div>Menyiapkan materi…</div>`;
+    d.style.background = "var(--emerald-deep)";
+    d.style.color = "var(--ivory)";
+    app.appendChild(d);
+  }
+
+  function renderLogin(){
+    const d = document.createElement("div");
+    d.id = "screen-login";
+    d.style.height = "100%";
+    d.style.overflowY = "auto";
+    d.innerHTML = `
+      <div class="motif"></div>
+      <div class="login-mark">${state.config.logoImage ? `<img src="${state.config.logoImage}">` : "س"}</div>
+      <h1>${esc(state.config.communityName || "Padepokan Omah Sapen")}</h1>
+      <p class="tagline">${esc(state.config.tagline || "").replace(/\n/g,"<br>")}</p>
+      <div class="login-form">
+        <label>Kode Akses Anggota</label>
+        <input type="text" id="login-input" placeholder="Masukkan kode akses" autocomplete="off">
+        <button class="btn-gold" id="login-btn">Masuk</button>
+        <div class="login-error" id="login-error"></div>
+      </div>
+      <div class="code-hint">Kode akses didapat dari pengurus Padepokan Omah Sapen.</div>
+      ${(state.config.address || state.config.skNumber || state.config.waNumber) ? `
+      <div class="login-footer">
+        ${state.config.address ? esc(state.config.address) + "<br>" : ""}
+        ${state.config.skNumber ? "SK Kemenkumham: " + esc(state.config.skNumber) + "<br>" : ""}
+        ${state.config.waNumber ? "WhatsApp: " + esc(state.config.waNumber) : ""}
+      </div>` : ""}
+    `;
+    app.appendChild(d);
+    const input = d.querySelector("#login-input");
+    const btn = d.querySelector("#login-btn");
+    const err = d.querySelector("#login-error");
+    function tryLogin(){
+      const val = input.value.trim();
+      if(!val){ err.textContent = "Kode akses tidak boleh kosong."; return; }
+      if(val === state.config.adminCode){
+        state.isAdmin = true; state.loggedInMemberName = "Pengurus"; state.screen = "home"; render(); return;
+      }
+      const found = (state.config.memberCodes||[]).find(m => m.code === val);
+      if(found){
+        state.isAdmin = false; state.loggedInMemberName = found.name; state.screen = "home"; render(); return;
+      }
+      if(state.config.memberCode && val === state.config.memberCode){
+        state.isAdmin = false; state.loggedInMemberName = null; state.screen = "home"; render(); return;
+      }
+      err.textContent = "Kode akses salah. Silakan coba lagi.";
+    }
+    btn.addEventListener("click", tryLogin);
+    input.addEventListener("keydown", e => { if(e.key === "Enter") tryLogin(); });
+    setTimeout(()=>input.focus(), 200);
+  }
+
+  function renderTopHeader({eyebrow, title, sub, back}){
+    const h = document.createElement("header");
+    h.className = "top";
+    h.innerHTML = `
+      ${back ? `<div class="back-row"><button class="back-btn" id="back-btn">‹</button></div>` : ""}
+      <div class="eyebrow">${esc(eyebrow||"")}</div>
+      <h2>${esc(title||"")}</h2>
+      ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
+    `;
+    if(back){
+      h.querySelector("#back-btn").addEventListener("click", back);
+    }
+    return h;
+  }
+
+  function renderHome(){
+    const c = screenBox();
+    c.appendChild(renderTopHeader({
+      eyebrow: "ASSALAMU'ALAIKUM",
+      title: state.config.communityName || "Padepokan Omah Sapen",
+      sub: "Pilih kategori materi di bawah ini"
+    }));
+    c.appendChild(el(`<div class="divider"></div>`));
+
+    const search = el(`
+      <div class="search-wrap">
+        <div class="search-box">
+          <span class="icon">⌕</span>
+          <input type="text" placeholder="Cari materi…" id="home-search">
+        </div>
+      </div>
+    `);
+    search.querySelector("#home-search").addEventListener("input", e=>{
+      state.searchQuery = e.target.value;
+      if(state.searchQuery.trim()){ state.screen = "search"; render(); }
+    });
+    c.appendChild(search);
+
+    const main = document.createElement("main");
+    const label = el(`<div class="section-label">KATEGORI</div>`);
+    main.appendChild(label);
+    const grid = el(`<div class="cat-grid"></div>`);
+    state.categories.forEach(cat=>{
+      const count = materiListByCategory(cat.id).length;
+      const card = el(`
+        <button class="cat-card">
+          <div class="cat-icon">${cat.icon||"✦"}</div>
+          <div class="cat-name">${esc(cat.name)}</div>
+          <div class="cat-count">${count} materi</div>
+        </button>
+      `);
+      card.addEventListener("click", ()=>{ state.activeCategoryId = cat.id; state.screen = "category"; render(); });
+      grid.appendChild(card);
+    });
+    main.appendChild(grid);
+
+    const totalMateri = Object.keys(state.materi).length;
+    if(totalMateri === 0){
+      main.appendChild(el(`
+        <div class="empty-state">
+          <div class="mark">﷽</div>
+          <div>Belum ada materi. ${state.isAdmin ? "Ketuk tombol + untuk menambahkan materi pertama." : "Materi akan segera ditambahkan oleh pengurus."}</div>
+        </div>
+      `));
+    }
+    c.appendChild(main);
+    if(state.isAdmin){
+      const fab = el(`<button class="fab" title="Tambah materi">+</button>`);
+      fab.addEventListener("click", ()=>{ openMateriForm(null); });
+      c.appendChild(fab);
+    }
+    return c;
+  }
+
+  function renderCategory(){
+    const cat = state.categories.find(c=>c.id===state.activeCategoryId);
+    const c = screenBox();
+    c.appendChild(renderTopHeader({
+      eyebrow: "KATEGORI",
+      title: cat ? cat.name : "Materi",
+      sub: null,
+      back: ()=>{ state.screen = "home"; render(); }
+    }));
+    c.appendChild(el(`<div class="divider thin"></div>`));
+    const main = document.createElement("main");
+    const list = materiListByCategory(state.activeCategoryId);
+    if(list.length === 0){
+      main.appendChild(el(`<div class="empty-state"><div class="mark">✦</div>Belum ada materi di kategori ini.</div>`));
+    }else{
+      const wrap = el(`<div class="materi-list"></div>`);
+      list.forEach(m=> wrap.appendChild(renderMateriCard(m)));
+      main.appendChild(wrap);
+    }
+    c.appendChild(main);
+    if(state.isAdmin){
+      const fab = el(`<button class="fab" title="Tambah materi">+</button>`);
+      fab.addEventListener("click", ()=>{ openMateriForm(null, state.activeCategoryId); });
+      c.appendChild(fab);
+    }
+    return c;
+  }
+
+  function renderMateriCard(m){
+    const imgs = materiImages(m);
+    const snippet = imgs.length > 1 ? `${imgs.length} halaman` : (m.content||"").slice(0,70).replace(/\n/g," ");
+    const card = el(`
+      <button class="materi-card">
+        ${imgs[0] ? `<img class="thumb" src="${imgs[0]}">` : `<div class="thumb-fallback">${catIcon(m.categoryId)}</div>`}
+        <div class="info">
+          <p class="title">${esc(m.title)}</p>
+          <p class="snippet">${esc(snippet)}</p>
+        </div>
+      </button>
+    `);
+    card.addEventListener("click", ()=>{ state.activeMateriId = m.id; state.screen = "detail"; render(); });
+    return card;
+  }
+
+  function renderSearch(){
+    const c = screenBox();
+    c.appendChild(renderTopHeader({
+      eyebrow: "PENCARIAN",
+      title: "Cari Materi",
+      back: ()=>{ state.screen = "home"; state.searchQuery=""; render(); }
+    }));
+    const search = el(`
+      <div class="search-wrap">
+        <div class="search-box">
+          <span class="icon">⌕</span>
+          <input type="text" placeholder="Cari materi…" id="search-input" value="${esc(state.searchQuery)}">
+        </div>
+      </div>
+    `);
+    search.querySelector("#search-input").addEventListener("input", e=>{
+      state.searchQuery = e.target.value; renderSearchResultsOnly();
+    });
+    c.appendChild(search);
+    const main = document.createElement("main");
+    main.id = "search-results-main";
+    c.appendChild(main);
+    setTimeout(()=>{ fillSearchResults(main); document.getElementById("search-input").focus(); }, 0);
+    return c;
+  }
+  function renderSearchResultsOnly(){
+    const main = document.getElementById("search-results-main");
+    if(main) fillSearchResults(main);
+  }
+  function fillSearchResults(main){
+    main.innerHTML = "";
+    const results = searchMateri(state.searchQuery);
+    if(!state.searchQuery.trim()){
+      main.appendChild(el(`<div class="empty-state"><div class="mark">⌕</div>Ketik kata kunci untuk mencari materi.</div>`));
+      return;
+    }
+    if(results.length === 0){
+      main.appendChild(el(`<div class="empty-state"><div class="mark">✦</div>Tidak ditemukan materi yang cocok.</div>`));
+      return;
+    }
+    const wrap = el(`<div class="materi-list"></div>`);
+    results.forEach(m=> wrap.appendChild(renderMateriCard(m)));
+    main.appendChild(wrap);
+  }
+
+  function renderDetail(){
+    const m = state.materi[state.activeMateriId];
+    const c = screenBox();
+    if(!m){
+      c.appendChild(renderTopHeader({title:"Materi tidak ditemukan", back:()=>{state.screen="home";render();}}));
+      return c;
+    }
+    c.appendChild(renderTopHeader({
+      eyebrow: catName(m.categoryId).toUpperCase(),
+      title: "Detail Materi",
+      back: ()=>{ state.screen = state.activeCategoryId ? "category" : "home"; render(); }
+    }));
+    const main = document.createElement("main");
+    const detail = el(`
+      <div class="materi-detail">
+        <span class="cat-tag">${catIcon(m.categoryId)} ${esc(catName(m.categoryId))}</span>
+        <h2 class="serif">${esc(m.title)}</h2>
+        ${materiImages(m).map(src=>`<img src="${src}">`).join("")}
+        <div class="content">${esc(m.content)}</div>
+      </div>
+    `);
+    main.appendChild(detail);
+    if(state.isAdmin){
+      const actions = el(`
+        <div style="padding:0 20px 30px; display:flex; gap:10px;">
+          <button class="btn-secondary" id="edit-materi-btn">✎ Edit</button>
+          <button class="btn-secondary" id="delete-materi-btn" style="color:var(--maroon);">🗑 Hapus</button>
+        </div>
+      `);
+      actions.querySelector("#edit-materi-btn").addEventListener("click", ()=> openMateriForm(m.id));
+      actions.querySelector("#delete-materi-btn").addEventListener("click", ()=>{
+        state.adminModal = "confirmDelete"; state.editingMateriId = m.id; render();
+      });
+      main.appendChild(actions);
+    }
+    c.appendChild(main);
+    return c;
+  }
+
+  function renderBottomNav(){
+    const nav = document.createElement("nav");
+    nav.className = "bottom";
+    const items = [
+      {id:"home", ic:"⌂", label:"Beranda"},
+      {id:"search", ic:"⌕", label:"Cari"},
+    ];
+    if(state.isAdmin) items.push({id:"admin", ic:"⚙", label:"Kelola"});
+    items.forEach(it=>{
+      const active = state.screen === it.id || (it.id==="admin" && state.screen==="adminForm");
+      const btn = el(`<button class="${active?'active':''}"><span class="ic">${it.ic}</span>${it.label}</button>`);
+      btn.addEventListener("click", ()=>{
+        if(it.id === "search"){ state.searchQuery=""; }
+        state.screen = it.id; render();
+      });
+      nav.appendChild(btn);
+    });
+    if(!state.isAdmin){
+      const btn = el(`<button><span class="ic">🔑</span>Admin</button>`);
+      btn.addEventListener("click", ()=>{ state.adminModal = "login"; render(); });
+      nav.appendChild(btn);
+    }
+    const logoutBtn = el(`<button><span class="ic">⏻</span>Keluar</button>`);
+    logoutBtn.addEventListener("click", ()=>{
+      state.isAdmin = false;
+      state.screen = "login";
+      state.activeCategoryId = null;
+      state.activeMateriId = null;
+      state.searchQuery = "";
+      render();
+    });
+    nav.appendChild(logoutBtn);
+    return nav;
+  }
+
+  // ---------- ADMIN ----------
+  function renderAdmin(){
+    const c = screenBox();
+    c.appendChild(renderTopHeader({
+      eyebrow: "MODE PENGURUS",
+      title: "Kelola Materi",
+      sub: Object.keys(state.materi).length + " materi tersimpan"
+    }));
+    c.appendChild(el(`<div class="divider thin"></div>`));
+    const main = document.createElement("main");
+    main.className = "admin-panel";
+
+    const exportRow = el(`
+      <div class="admin-card" style="background:var(--emerald-deep); border:none;">
+        <div class="title" style="color:var(--ivory);">📤 Ekspor &amp; Bagikan</div>
+        <div class="meta" style="color:rgba(250,246,236,0.7); margin-bottom:12px;">Setelah menambah/mengubah materi, unduh file terbaru lalu kirim ke anggota lewat WhatsApp/Drive agar semua mendapat pembaruan.</div>
+        <button class="btn-gold" id="export-btn" style="margin-top:0;">Unduh File Terbaru</button>
+      </div>
+    `);
+    exportRow.querySelector("#export-btn").addEventListener("click", ()=>{
+      exportUpdatedFile();
+      showToast("File terbaru sedang diunduh…");
+    });
+    main.appendChild(exportRow);
+
+    const importRow = el(`
+      <div class="admin-card" style="border:1px dashed var(--ink-soft);">
+        <div class="title">📥 Impor Data dari File Lama</div>
+        <div class="meta" style="margin-bottom:12px;">Pindah ke versi file baru tanpa kehilangan materi: pilih file HTML aplikasi ini yang lama (yang sudah berisi materi) dari HP/komputer.</div>
+        <input type="file" accept=".html,.json" id="import-input" style="display:none;">
+        <button type="button" class="upload-btn" id="import-btn">Pilih file lama…</button>
+      </div>
+    `);
+    importRow.querySelector("#import-btn").addEventListener("click", ()=> importRow.querySelector("#import-input").click());
+    importRow.querySelector("#import-input").addEventListener("change", e=>{
+      const file = e.target.files[0];
+      if(file) importFromFile(file);
+      e.target.value = "";
+    });
+    main.appendChild(importRow);
+
+    const settingsRow = el(`
+      <button class="admin-card" id="open-settings" style="width:100%; text-align:left; border:1px solid var(--line);">
+        <div class="row">
+          <div>
+            <div class="title">Pengaturan Akses</div>
+            <div class="meta">Ubah kode akses anggota / pengurus &amp; kelola kategori</div>
+          </div>
+          <span style="color:var(--ink-soft);">›</span>
+        </div>
+      </button>
+    `);
+    settingsRow.addEventListener("click", ()=>{ state.adminModal = "settings"; render(); });
+    main.appendChild(settingsRow);
+
+    const memberCodesRow = el(`
+      <button class="admin-card" id="open-member-codes" style="width:100%; text-align:left; border:1px solid var(--line);">
+        <div class="row">
+          <div>
+            <div class="title">Kode Akses per Anggota</div>
+            <div class="meta">${(state.config.memberCodes||[]).length} anggota terdaftar — beda kode per orang, bisa dicabut satu-satu</div>
+          </div>
+          <span style="color:var(--ink-soft);">›</span>
+        </div>
+      </button>
+    `);
+    memberCodesRow.addEventListener("click", ()=>{ state.adminModal = "memberCodes"; render(); });
+    main.appendChild(memberCodesRow);
+
+    main.appendChild(el(`<div class="section-label" style="padding-left:0;">SEMUA MATERI</div>`));
+
+    const list = Object.entries(state.materi).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+    if(list.length===0){
+      main.appendChild(el(`<div class="empty-state"><div class="mark">✦</div>Belum ada materi. Ketuk tombol + untuk menambahkan.</div>`));
+    }else{
+      list.forEach(([id,m])=>{
+        const card = el(`
+          <div class="admin-card">
+            <div class="row">
+              <div style="min-width:0;">
+                <div class="title">${esc(m.title)}</div>
+                <div class="meta">${esc(catName(m.categoryId))}</div>
+              </div>
+              <div style="display:flex; gap:8px; flex-shrink:0;">
+                <button class="icon-btn" data-act="edit">✎</button>
+                <button class="icon-btn danger" data-act="del">🗑</button>
+              </div>
+            </div>
+          </div>
+        `);
+        card.querySelector('[data-act="edit"]').addEventListener("click", ()=> openMateriForm(id));
+        card.querySelector('[data-act="del"]').addEventListener("click", ()=>{
+          state.adminModal = "confirmDelete"; state.editingMateriId = id; render();
+        });
+        main.appendChild(card);
+      });
+    }
+    c.appendChild(main);
+    const fab = el(`<button class="fab" title="Tambah materi">+</button>`);
+    fab.addEventListener("click", ()=> openMateriForm(null));
+    c.appendChild(fab);
+    return c;
+  }
+
+  function openMateriForm(id, presetCategoryId){
+    state.editingMateriId = id;
+    if(id && state.materi[id]){
+      const src = state.materi[id];
+      state.formDraft = { title: src.title, categoryId: src.categoryId, content: src.content, images: materiImages(src) };
+    }else{
+      state.formDraft = { title:"", categoryId: presetCategoryId || (state.categories[0] && state.categories[0].id) || "", content:"", images: [] };
+    }
+    state.screen = "adminForm";
+    render();
+  }
+
+  function renderAdminForm(){
+    const isEdit = !!state.editingMateriId;
+    const c = screenBox();
+    c.appendChild(renderTopHeader({
+      eyebrow: "MODE PENGURUS",
+      title: isEdit ? "Edit Materi" : "Tambah Materi",
+      back: ()=>{ state.screen = "admin"; render(); }
+    }));
+    const main = document.createElement("main");
+    main.style.padding = "18px 20px 30px";
+
+    const catOptions = state.categories.map(c=>`<option value="${c.id}" ${state.formDraft.categoryId===c.id?"selected":""}>${esc(c.name)}</option>`).join("");
+
+    const form = el(`
+      <div>
+        <div class="form-field">
+          <label>Judul Materi</label>
+          <input type="text" id="f-title" placeholder="Contoh: Bacaan Istigosah Harian" value="${esc(state.formDraft.title)}">
+        </div>
+        <div class="form-field">
+          <label>Kategori</label>
+          <select id="f-cat">${catOptions}</select>
+          <div style="margin-top:8px;">
+            <button type="button" class="upload-btn" id="add-cat-btn">+ Kategori baru</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Gambar / Halaman PDF (opsional)</label>
+          <div id="img-preview-area"></div>
+          <input type="file" accept="image/*" id="f-image" style="display:none;">
+          <input type="file" accept="application/pdf" id="f-pdf" style="display:none;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="upload-btn" id="upload-btn">📷 Tambah gambar</button>
+            <button type="button" class="upload-btn" id="upload-pdf-btn">📄 Upload dari PDF</button>
+          </div>
+          <div id="pdf-progress" style="font-size:12.5px; color:var(--ink-soft); margin-top:8px; display:none;"></div>
+        </div>
+        <div class="form-field">
+          <label>Isi Materi</label>
+          <textarea id="f-content" placeholder="Tulis bacaan atau penjelasan materi di sini…">${esc(state.formDraft.content)}</textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" id="cancel-btn">Batal</button>
+          <button class="btn-primary" id="save-btn">Simpan Materi</button>
+        </div>
+      </div>
+    `);
+    main.appendChild(form);
+    c.appendChild(main);
+
+    function renderImgPreview(){
+      const area = form.querySelector("#img-preview-area");
+      area.innerHTML = "";
+      if(state.formDraft.images.length){
+        const grid = el(`<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;"></div>`);
+        state.formDraft.images.forEach((src, idx)=>{
+          const wrap = el(`
+            <div class="img-preview-wrap" style="margin-bottom:0;">
+              <img src="${src}" style="aspect-ratio:1; object-fit:cover;">
+              <button type="button" class="img-remove">✕</button>
+            </div>
+          `);
+          wrap.querySelector(".img-remove").addEventListener("click", ()=>{
+            state.formDraft.images.splice(idx,1); renderImgPreview();
+          });
+          grid.appendChild(wrap);
+        });
+        area.appendChild(grid);
+      }
+    }
+    renderImgPreview();
+
+    form.querySelector("#f-cat").addEventListener("change", e=>{ state.formDraft.categoryId = e.target.value; });
+    form.querySelector("#add-cat-btn").addEventListener("click", ()=>{
+      const name = prompt("Nama kategori baru:");
+      if(name && name.trim()){
+        const id = "cat-" + Date.now();
+        state.categories.push({id, name: name.trim(), icon:"✦"});
+        saveCategories();
+        state.formDraft.categoryId = id;
+        render();
+      }
+    });
+    form.querySelector("#upload-btn").addEventListener("click", ()=> form.querySelector("#f-image").click());
+    form.querySelector("#f-image").addEventListener("change", e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      compressImage(file, (dataUrl)=>{
+        state.formDraft.images.push(dataUrl);
+        renderImgPreview();
+      });
+      e.target.value = "";
+    });
+
+    const pdfProgress = form.querySelector("#pdf-progress");
+    form.querySelector("#upload-pdf-btn").addEventListener("click", ()=>{
+      if(!window['pdfjsLib']){ showToast("Fitur PDF belum siap, coba lagi sesaat lagi"); return; }
+      form.querySelector("#f-pdf").click();
+    });
+    form.querySelector("#f-pdf").addEventListener("change", async e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      pdfProgress.style.display = "block";
+      pdfProgress.textContent = "Membaca file PDF…";
+      try{
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+        for(let i=1; i<=pdf.numPages; i++){
+          pdfProgress.textContent = `Memproses halaman ${i} dari ${pdf.numPages}…`;
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({scale: 1.3});
+          const canvas = document.createElement("canvas");
+          canvas.width = viewport.width; canvas.height = viewport.height;
+          await page.render({canvasContext: canvas.getContext("2d"), viewport}).promise;
+          state.formDraft.images.push(canvas.toDataURL("image/jpeg", 0.65));
+          renderImgPreview();
+        }
+        pdfProgress.textContent = `Selesai — ${pdf.numPages} halaman ditambahkan.`;
+        setTimeout(()=>{ pdfProgress.style.display = "none"; }, 2000);
+      }catch(err){
+        pdfProgress.textContent = "Gagal memproses PDF. Pastikan file PDF valid.";
+      }
+      e.target.value = "";
+    });
+    form.querySelector("#cancel-btn").addEventListener("click", ()=>{ state.screen = "admin"; render(); });
+    form.querySelector("#save-btn").addEventListener("click", async ()=>{
+      const title = form.querySelector("#f-title").value.trim();
+      const content = form.querySelector("#f-content").value.trim();
+      if(!title){ showToast("Judul materi wajib diisi"); return; }
+      const id = state.editingMateriId || ("m-" + Date.now());
+      state.materi[id] = {
+        title, content,
+        categoryId: state.formDraft.categoryId,
+        images: state.formDraft.images || [],
+        createdAt: (state.editingMateriId && state.materi[id] && state.materi[id].createdAt) || Date.now()
+      };
+      try{
+        await saveMateri();
+        showToast("Materi tersimpan");
+        state.editingMateriId = null;
+        state.screen = "admin";
+        render();
+      }catch(err){
+        showToast("Gagal menyimpan. Coba lagi.");
+      }
+    });
+    return c;
+  }
+
+  function compressImage(file, cb){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const img = new Image();
+      img.onload = function(){
+        const maxW = 900;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        cb(canvas.toDataURL("image/jpeg", 0.72));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderAdminLoginModal(){
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`
+      <div class="modal-sheet">
+        <h3>Masuk sebagai Pengurus</h3>
+        <div class="desc">Masukkan kode akses pengurus untuk menambah atau mengubah materi.</div>
+        <div class="form-field">
+          <label>Kode Akses Pengurus</label>
+          <input type="text" id="admin-code-input" placeholder="Kode admin">
+        </div>
+        <div class="login-error" id="admin-login-error" style="color:var(--maroon); min-height:16px;"></div>
+        <div class="form-actions">
+          <button class="btn-secondary" id="admin-cancel">Batal</button>
+          <button class="btn-primary" id="admin-submit">Masuk</button>
+        </div>
+      </div>
+    `);
+    overlay.appendChild(sheet);
+    overlay.addEventListener("click", e=>{ if(e.target===overlay){ state.adminModal=null; render(); } });
+    sheet.querySelector("#admin-cancel").addEventListener("click", ()=>{ state.adminModal=null; render(); });
+    sheet.querySelector("#admin-submit").addEventListener("click", ()=>{
+      const val = sheet.querySelector("#admin-code-input").value.trim();
+      if(val === state.config.adminCode){
+        state.isAdmin = true; state.adminModal = null; state.screen = "admin"; render();
+      }else{
+        sheet.querySelector("#admin-login-error").textContent = "Kode salah.";
+      }
+    });
+    return overlay;
+  }
+
+  function renderSettingsModal(){
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`
+      <div class="modal-sheet">
+        <h3>Pengaturan Akses</h3>
+        <div class="desc">Kode akses ini dibagikan kepada anggota / pengurus untuk masuk ke aplikasi.</div>
+        <div class="form-field">
+          <label>Logo Aplikasi</label>
+          <div id="s-logo-preview-area"></div>
+          <input type="file" accept="image/*" id="s-logo-input" style="display:none;">
+          <button type="button" class="upload-btn" id="s-logo-upload-btn">🖼️ Pilih dari galeri</button>
+        </div>
+        <div class="form-field">
+          <label>Nama Komunitas</label>
+          <input type="text" id="s-name" value="${esc(state.config.communityName)}">
+        </div>
+        <div class="form-field">
+          <label>Kalimat di Bawah Nama (Tagline)</label>
+          <textarea id="s-tagline" placeholder="Contoh: Kumpulan bacaan istigosah & materi pengobatan, ruqyah untuk anggota dan praktisi">${esc(state.config.tagline)}</textarea>
+        </div>
+        <div class="form-field">
+          <label>Alamat Padepokan</label>
+          <textarea id="s-address" placeholder="Contoh: Dusun Sapen, Ds. ..., Kec. ..., Kab. ...">${esc(state.config.address)}</textarea>
+        </div>
+        <div class="form-field">
+          <label>No. SK Kemenkumham</label>
+          <input type="text" id="s-sk" placeholder="Contoh: AHU-0001234.AH.01.07 Tahun 2024" value="${esc(state.config.skNumber)}">
+        </div>
+        <div class="form-field">
+          <label>No. WhatsApp</label>
+          <input type="text" id="s-wa" placeholder="Contoh: 0812-3456-7890" value="${esc(state.config.waNumber)}">
+        </div>
+        <div class="form-field">
+          <label>Kode Akses Umum (opsional)</label>
+          <input type="text" id="s-member" value="${esc(state.config.memberCode)}">
+          <div style="font-size:11.5px; color:var(--ink-soft); margin-top:5px;">Kode ini berlaku untuk siapa saja yang tahu. Kosongkan kalau ingin semua anggota wajib pakai kode masing-masing (atur di menu "Kode Akses per Anggota").</div>
+        </div>
+        <div class="form-field">
+          <label>Kode Akses Pengurus (Admin)</label>
+          <input type="text" id="s-admin" value="${esc(state.config.adminCode)}">
+        </div>
+        <div class="form-actions">
+          <button class="btn-secondary" id="s-cancel">Tutup</button>
+          <button class="btn-primary" id="s-save">Simpan</button>
+        </div>
+      </div>
+    `);
+    overlay.appendChild(sheet);
+
+    let draftLogo = state.config.logoImage || null;
+    function renderLogoPreview(){
+      const area = sheet.querySelector("#s-logo-preview-area");
+      area.innerHTML = "";
+      if(draftLogo){
+        const wrap = el(`
+          <div class="img-preview-wrap" style="max-width:120px;">
+            <img src="${draftLogo}" style="border-radius:50%; aspect-ratio:1; object-fit:cover;">
+            <button type="button" class="img-remove">✕</button>
+          </div>
+        `);
+        wrap.querySelector(".img-remove").addEventListener("click", ()=>{ draftLogo = null; renderLogoPreview(); });
+        area.appendChild(wrap);
+      }
+    }
+    renderLogoPreview();
+    sheet.querySelector("#s-logo-upload-btn").addEventListener("click", ()=> sheet.querySelector("#s-logo-input").click());
+    sheet.querySelector("#s-logo-input").addEventListener("change", e=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      compressImage(file, (dataUrl)=>{ draftLogo = dataUrl; renderLogoPreview(); });
+    });
+
+    overlay.addEventListener("click", e=>{ if(e.target===overlay){ state.adminModal=null; render(); } });
+    sheet.querySelector("#s-cancel").addEventListener("click", ()=>{ state.adminModal=null; render(); });
+    sheet.querySelector("#s-save").addEventListener("click", async ()=>{
+      const name = sheet.querySelector("#s-name").value.trim();
+      const member = sheet.querySelector("#s-member").value.trim();
+      const admin = sheet.querySelector("#s-admin").value.trim();
+      if(!admin){ showToast("Kode akses pengurus tidak boleh kosong"); return; }
+      state.config.communityName = name || "Padepokan Omah Sapen";
+      state.config.tagline = sheet.querySelector("#s-tagline").value.trim();
+      state.config.address = sheet.querySelector("#s-address").value.trim();
+      state.config.skNumber = sheet.querySelector("#s-sk").value.trim();
+      state.config.waNumber = sheet.querySelector("#s-wa").value.trim();
+      state.config.memberCode = member;
+      state.config.adminCode = admin;
+      state.config.logoImage = draftLogo;
+      try{
+        await saveConfig();
+        state.adminModal = null;
+        showToast("Pengaturan tersimpan");
+        render();
+      }catch(err){ showToast("Gagal menyimpan pengaturan"); }
+    });
+    return overlay;
+  }
+
+  function renderMemberCodesModal(){
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const list = state.config.memberCodes || [];
+    const rows = list.map(m => `
+      <div class="admin-card" data-mc-id="${esc(m.id)}">
+        <div class="row">
+          <div style="min-width:0;">
+            <div class="title">${esc(m.name)}</div>
+            <div class="meta">Kode: ${esc(m.code)}</div>
+          </div>
+          <button class="icon-btn danger" data-act="del-mc">🗑</button>
+        </div>
+      </div>
+    `).join("");
+    const sheet = el(`
+      <div class="modal-sheet">
+        <h3>Kode Akses per Anggota</h3>
+        <div class="desc">Setiap anggota bisa diberi kode masing-masing. Kalau satu kode bocor/disalahgunakan, hapus saja kode itu tanpa mengganggu anggota lain. Kode Akses Anggota di Pengaturan Akses (kode umum) tetap berlaku juga kalau masih diisi.</div>
+        <div id="mc-list">${rows || `<div class="empty-state" style="padding:24px 10px;">Belum ada anggota terdaftar.</div>`}</div>
+        <button type="button" class="upload-btn" id="mc-add-btn" style="margin-top:6px; width:100%; justify-content:center;">+ Tambah Anggota</button>
+        <div class="form-actions">
+          <button class="btn-secondary" id="mc-close" style="flex:1;">Tutup</button>
+        </div>
+      </div>
+    `);
+    overlay.appendChild(sheet);
+    overlay.addEventListener("click", e=>{ if(e.target===overlay){ state.adminModal=null; render(); } });
+    sheet.querySelector("#mc-close").addEventListener("click", ()=>{ state.adminModal=null; render(); });
+    sheet.querySelectorAll('[data-act="del-mc"]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.closest("[data-mc-id]").getAttribute("data-mc-id");
+        const m = list.find(x=>x.id===id);
+        if(confirm(`Hapus akses untuk "${m ? m.name : ''}"? Anggota ini tidak akan bisa masuk lagi dengan kode tersebut.`)){
+          state.config.memberCodes = list.filter(x=>x.id!==id);
+          saveConfig();
+          showToast("Kode anggota dihapus");
+          render();
+        }
+      });
+    });
+    sheet.querySelector("#mc-add-btn").addEventListener("click", ()=>{
+      const name = prompt("Nama anggota:");
+      if(!name || !name.trim()) return;
+      const suggested = name.trim().toLowerCase().replace(/[^a-z0-9]+/g,"") + Math.floor(100 + Math.random()*900);
+      const code = prompt(`Kode akses untuk "${name.trim()}" (bisa diubah sesuai keinginan):`, suggested);
+      if(!code || !code.trim()) return;
+      if(!state.config.memberCodes) state.config.memberCodes = [];
+      state.config.memberCodes.push({ id: "mc-" + Date.now(), name: name.trim(), code: code.trim() });
+      saveConfig();
+      showToast(`Kode untuk "${name.trim()}" ditambahkan`);
+      render();
+    });
+    return overlay;
+  }
+
+  function renderConfirmDeleteModal(){
+    const m = state.materi[state.editingMateriId];
+    const overlay = el(`<div class="modal-overlay"></div>`);
+    const sheet = el(`
+      <div class="modal-sheet">
+        <h3>Hapus Materi?</h3>
+        <div class="desc">"${esc(m ? m.title : "")}" akan dihapus permanen dan tidak dapat dikembalikan.</div>
+        <div class="form-actions">
+          <button class="btn-secondary" id="del-cancel">Batal</button>
+          <button class="btn-primary" id="del-confirm" style="background:var(--maroon);">Hapus</button>
+        </div>
+      </div>
+    `);
+    overlay.appendChild(sheet);
+    overlay.addEventListener("click", e=>{ if(e.target===overlay){ state.adminModal=null; render(); } });
+    sheet.querySelector("#del-cancel").addEventListener("click", ()=>{ state.adminModal=null; render(); });
+    sheet.querySelector("#del-confirm").addEventListener("click", async ()=>{
+      delete state.materi[state.editingMateriId];
+      try{
+        await saveMateri();
+        state.adminModal = null;
+        state.editingMateriId = null;
+        if(state.screen === "detail") state.screen = "admin";
+        showToast("Materi dihapus");
+        render();
+      }catch(err){ showToast("Gagal menghapus materi"); }
+    });
+    return overlay;
+  }
+
+  function screenBox(){
+    const c = document.createElement("div");
+    c.style.display = "flex";
+    c.style.flexDirection = "column";
+    c.style.flex = "1";
+    c.style.minHeight = "0";
+    c.style.overflow = "hidden";
+    c.style.position = "relative";
+    return c;
+  }
+
+  function el(html){
+    const t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  loadData();
+
+  if("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")){
+    window.addEventListener("load", ()=>{
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    });
+  }
+})();
+</script>
+</body>
+</html>
